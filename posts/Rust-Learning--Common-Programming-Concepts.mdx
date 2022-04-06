@@ -1,0 +1,148 @@
+---
+title: The Rust Programming Language Reading Notes: Common Programming Concepts
+description:  "Covering concepts that appear in almost every programming language and how they work in Rust."
+date: April 6 2022
+---
+
+# Variables and Mutability
+
+
+
+Starting with the following code :
+
+```rust
+fn main() {
+    let x = 5;
+    println!("The value of x is: {}", x);
+    x = 6;
+    println!("The value of x is: {}", x);
+}
+
+```
+
+Save and run this code by using `cargo run`,then you would receive an error message like:
+
+```
+$ cargo run
+   Compiling variables v0.1.0 (file:///projects/variables)
+error[E0384]: cannot assign twice to immutable variable `x`
+ --> src/main.rs:4:5
+  |
+2 |     let x = 5;
+  |         -
+  |         |
+  |         first assignment to `x`
+  |         help: consider making this binding mutable: `mut x`
+3 |     println!("The value of x is: {}", x);
+4 |     x = 6;
+  |     ^^^^^ cannot assign twice to immutable variable
+
+For more information about this error, try `rustc --explain E0384`.
+error: could not compile `variables` due to previous error
+
+```
+
+The error message indicates that the cause of the error is that you `cannot assign twice to immutable variable `'x'`, because you tried to assign a second value to the immutable `x variable.
+
+The Rust compiler guarantees that the value you state won't change its value as variables are immutable  by default
+
+However, mutability can be useful sometimes , hence ,we can adding `mut` in front of the variable name.
+
+In this way, we can change the code above like:
+
+```rust
+fn main() {
+    let mut x = 5;
+    println!("The value of x is: {}", x);
+    x = 6;
+    println!("The value of x is: {}", x);
+}
+
+```
+
+We’re allowed to change the value bound to `x` from `5` to `6` when `mut` is used.
+
+# Constants
+
+Like immutable variables, *constants* are values that are bound to a name and are not allowed to change, but there are a few differences between constants and variables.
+
+1. `mut` can't be used to modify constants
+2. using `const`not `let` to declare constants 
+3. the type of value must be annotated
+
+For instance:
+
+```rust
+#![allow(unused)]
+fn main() {
+const THREE_HOURS_IN_SECONDS: u32 = 60 * 60 * 3;
+}
+```
+
+> Rust’s naming convention for constants is to use all uppercase with underscores between words. 
+
+Constants are valid for the entire time a program runs, within the scope they were declared in. 
+
+# Shadowing
+
+The code below shows the concepts of shadowing
+
+```rust
+fn main() {
+    let x = 5;
+
+    let x = x + 1;
+
+    {
+        let x = x * 2;
+        println!("The value of x in the inner scope is: {}", x);
+    }
+
+    println!("The value of x is: {}", x);
+}
+
+```
+
+Usually, Rustaceans say that the first variable is *shadowed* by the second, which means that the second variable’s value is what the program sees when the variable is used.
+
+By repeating the use of the `let` keywords,we can shadow a variable using the exactly same name.
+
+## Difference 
+
+Shadowing is different from marking a variable as `mut` ,'cause  it's gonna wrong if you try to reassign to a variable without using `let` .
+
+So we can perform a few transformations on a value but have the variable be immutable after those transformations have been completed.
+
+The other difference between `mut` and shadowing is that shadowing is an effective ways to creating a new variable but reuse the same name 
+
+Like the example below:
+
+```rust
+fn main() {
+    let spaces = "   ";
+    let spaces = spaces.len();
+}
+
+fn main() {
+    let mut spaces = "   ";
+    spaces = spaces.len();
+}
+
+```
+
+The first case can be compiled ,however the second one would show some error
+
+```
+$ cargo run
+   Compiling variables v0.1.0 (file:///projects/variables)
+error[E0308]: mismatched types
+ --> src/main.rs:3:14
+  |
+3 |     spaces = spaces.len();
+  |              ^^^^^^^^^^^^ expected `&str`, found `usize`
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `variables` due to previous error
+
+```
+
