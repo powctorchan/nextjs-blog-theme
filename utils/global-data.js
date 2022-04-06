@@ -7,7 +7,7 @@ export const getGlobalData = () => {
     : 'Learing Notes';
   const footerText = process.env.BLOG_FOOTER_TEXT
     ? decodeURI(process.env.BLOG_FOOTER_TEXT)
-    : 'DRIVEN BY PASSION';
+    : 'DRIVEN BY Intérêt';
 
   return {
     name,
