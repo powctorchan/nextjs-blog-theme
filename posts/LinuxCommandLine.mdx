@@ -1,0 +1,280 @@
+# LINUX COMMAND LINE
+
+## LEARNING THE SHELL
+
+### WHAT IS SHELL?
+
+The shell is a program that takes keyboard commands and passes them to the operating system to carry out. Almost all Linux distributions supply a shell program from the GNU Project called bash.
+
+>BASH: **b**ourne-**a**gain **sh**ell
+
+#### Terminal Emulators
+
+When using a graphical user interface (GUI), we need another program
+called a terminal emulator to interact with the shell.
+
+>KDE uses konsole, and GNOME uses gnome-terminal, though it’s likely called simply Terminal on your menu.
+
+A numbers of terminal emulators are available for Linux, but they all basically doing one thing--giving users an access to shell.
+
+#### Making the First Keystrokes
+
+After lauching the terminal emulator,it is easily to see something like this:
+
+[me@linuxbox ~]$
+
+This is called a **shell prompt**.
+
+Typically, it will include your username@machinename,followed by the current working directory and a dollar sign.  
+If the last character of the prompt is a hash mark (#) rather than a
+dollar sign, the terminal session has superuser privileges. That means we are logged in as the root user or we selected a terminal emulator that provides superuser(administrative)privileges.
+
+##### Command Historyn
+
+If we press the up arrow,we will see that the previous command entered,reappears after the prompt. This is called the command history. Press the down button and the previous command disappears
+
+##### Cursor Movement
+
+Recall the previous command by pressing the up arrow again. If we try the left and right arrows, we’ll see that we can position the cursor anywhere on the command line. This makes editing commands easy.
+
+#### Some Simple Commands
+
+```linux
+[me@linuxbox ~]$ date
+```
+
+shows the date of today
+
+```linux
+[me@linuxbox ~]$ cal
+```
+
+shows the calendar of this month
+
+```linux
+[me@linuxbox ~]$ df
+```
+
+to see the current amount of free space on our disk drives
+
+```linux
+[me@linuxbox ~]$ free
+```
+
+to display the amount of free memory
+
+##### Ending the Terminal Emulator
+
+```linux
+[me@linuxbox ~]$ exit
+```
+
+### Navigation
+
+**pwd** Print name of current working directory  
+**cd** Change directory  
+**ls** List directory contents
+
+#### Understanding the File System Tree
+
+Linux organizes its files
+in what is called a hierarchical directory structure. This means they are organized in a tree-like pattern of directories (sometimes called folders in other systems), which may contain files and other directories
+
+#### The Current Working Directory
+
+The directory we are standing in is called the current working directory. To display the current working directory, we use the
+pwd (print working directory) command.
+
+***
+[me@linuxbox ~]$ pwd
+/home/me
+***
+
+#### Listing the Contents of a Directory
+
+To list the files and directories in the current working directory, we use the ls command.
+
+***
+[me@linuxbox ~]$ ls
+Desktop Documents Music Pictures Public Templates Videos
+***
+
+>Actually,it can be used in any directory
+
+#### Changing the Current Working Directory
+
+To change our working directory, we use the cd command.
+
+To do this ,type cd followed by pathname of the desired working directory.
+
+The pathname has two different ways :  
+
+1. absolute pathnames
+2. relative pathnames
+
+##### Absolute Pathnames
+
+An absolute pathname begins with the root directory and follows the tree branch by branch until the path to the desired directory or file is completed.  
+For instance, /usr/bin means from the root directory (represented by the leading slash in the pathname) there is a directory called usr that contains a directory called bin.
+
+***
+[me@linuxbox ~]$ cd /usr/bin
+
+[me@linuxbox bin]$ pwd
+/usr/bin
+
+[me@linuxbox bin]$ ls
+...Listing of many, many files ...
+
+***
+
+##### Relative Pathnames
+
+Where an absolute pathname starts from the root directory and leads to its destination, a relative pathname starts from the working directory. To do this, it uses a couple of special notations to represent relative positions in the file system tree. These special notations are . (dot) and .. (dot dot).
+
+The . notation refers to the current working directory and the .. notation refers to the parents directory of current working directory
+
+***
+[me@linuxbox ~]$ cd /usr/bin
+
+[me@linuxbox bin]$ pwd
+/usr/bin
+
+***
+
+***
+[me@linuxbox bin]$ cd /usr
+
+[me@linuxbox usr]$ pwd
+/usr
+
+***
+or
+***
+[me@linuxbox bin]$ cd ..
+
+[me@linuxbox usr]$ pwd
+/usr
+
+***
+
+Likewise, we can change the working directory from /usr to /usr/bin in two different ways, either using an absolute pathname:
+
+***
+[me@linuxbox usr]$ cd /usr/bin
+
+[me@linuxbox bin]$ pwd
+/usr/bin
+
+***
+or
+***
+[me@linuxbox usr]$ cd ./bin
+
+[me@linuxbox bin]$ pwd
+/usr/bin
+
+***
+
+In almost all cases, we can omit the ./ part because it is **implied**. Typing the following does the same thing:
+
+***
+[me@linuxbox usr]$ cd bin
+***
+
+##### Some Helpful Shortcuts
+
+cd Shortcut  
+    cd  
+    Changes the working directory to your home directory.  
+    cd -  
+    Changes the working directory to the previous working directory.  
+    cd ~user_name  
+    Changes the working directory to the home directory of user_name.  
+    For example, typing cd ~bob will change the directory to the home directory of user “bob.”
+
+### Exploring the System
+
+**ls** List directory contents
+**file** Determine file type
+**less** View file contents
+
+#### Something More about ls
+
+We can simply enter ls to get a list of files and subdirectories contained in the current working directory.
+
+***
+[me@linuxbox ~]$ ls
+Desktop Documents Music Pictures Public Templates Videos
+***
+
+We can specify the directory to list,like so:
+
+***
+[me@linuxbox ~]$ ls /usr
+bin games include lib local sbin share src
+***
+
+We can even specify multiple directories.
+
+***
+[me@linuxbox ~]$ ls ~ /usr
+/home/me:
+Desktop Documents Music Pictures Public Templates Videos
+/usr:
+bin games include lib local sbin share src
+***
+
+We can also change the format of the output to reveal more detail
+
+***
+[me@linuxbox ~]$ ls -l
+total 56
+drwxrwxr-x 2 me me 4096 2017-10-26 17:20 Desktop
+drwxrwxr-x 2 me me 4096 2017-10-26 17:20 Documents
+drwxrwxr-x 2 me me 4096 2017-10-26 17:20 Music
+drwxrwxr-x 2 me me 4096 2017-10-26 17:20 Pictures
+drwxrwxr-x 2 me me 4096 2017-10-26 17:20 Public
+drwxrwxr-x 2 me me 4096 2017-10-26 17:20 Templates
+drwxrwxr-x 2 me me 4096 2017-10-26 17:20 Videos
+***
+
+##### Options and Arguments
+
+This will show how most commands work  
+Commands are often followed by one or more options that modify their behavior and ,further, by one or more arguments
+
+***
+command -options arguments
+***
+
+Common ls Options
+
+| Option     | Long option | Description    |
+| :---        |    :----  |          :--- |
+|-a    | --all      | List all files, even those with names that begin with a period, which are normally not listed (that is, hidden).   |
+| -A   | --almost-all       | Like the -a option except it does not list . (current directory)and .. (parent directory).      |
+|-d|--directory|Ordinarily, if a directory is specified, ls will list the contents of the directory, not the directory itself. Use this option in conjunction with the -l option to see details about the directory rather than its contents.|
+|-F|--classify|This option will append an indicator character to the end of each listed name. For example, it will append a forward slash (/) if the name is a directory.|
+|-h|--human-readable|In long format listings, display file sizes in humanreadable format rather than in bytes.|
+|-l||Display results in long format.|
+|-r|--reverse|Display the results in reverse order. Normally, ls displays its results in ascending alphabetical order.|
+|-S||Sort results by file size.|
+|-t||Sort by modification time.|
+
+#### Determining a File’s Type with file
+
+As we explore the system, it will be useful to know what files contain. To do this, we will use the file command to determine a file’s type.  
+We can invoke the file command this way:
+
+***
+file filename
+***
+
+For instance
+
+***
+[me@linuxbox ~]$ file picture.jpg  
+picture.jpg: JPEG image data, JFIF standard 1.01
+
+***
