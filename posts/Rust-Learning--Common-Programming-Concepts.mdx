@@ -405,3 +405,209 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 
 The program resulted in a *runtime* error at the point of using an invalid value in the indexing operation. The program exited with an error message and didn’t execute the final `println!` statement. When you attempt to access an element using indexing, Rust will check that the index you’ve specified is less than the array length. If the index is greater than or equal to the length, Rust will panic.
 
+# Functions
+
+Functions are prevalent in Rust code.
+
+The `main`function is of vital importance as it is the entry of the program
+
+Through `fn` keyword ,we can define the function and its following name and the set of parentheses.
+
+For example:
+
+```rust
+fn main() {
+    println!("Hello, world!");
+
+    another_function();
+}
+
+fn another_function() {
+    println!("Another function.");
+}
+
+```
+
+> Rust doesn’t care where you define your functions, only that they’re defined somewhere.
+
+## Parameters
+
+We can define functions to have *parameters*, which are special variables that are part of a function’s signature. When a function has parameters, you can provide it with concrete values for those parameters. 
+
+Adding a parameter for the code above:
+
+```rust
+fn main() {
+    another_function(5);
+}
+
+fn another_function(x: i32) {
+    println!("The value of x is: {}", x);
+}
+
+```
+
+In function signatures, you *must* declare the type of each parameter. This is a deliberate decision in Rust’s design: requiring type annotations in function definitions means the compiler almost never needs you to use them elsewhere in the code to figure out what type you mean.
+
+When defining multiple parameters, separate the parameter declarations with commas, like this:
+
+```rust
+fn main() {
+    print_labeled_measurement(5, 'h');
+}
+
+fn print_labeled_measurement(value: i32, unit_label: char) {
+    println!("The measurement is: {}{}", value, unit_label);
+}
+
+```
+
+# Statements and Expressions
+
+Function bodies are made up of a series of statements optionally ending in an expression.
+
+Those function that we have been mentioned didn't include an ending expression
+
+However,Rust is an expression-based language, this is an important distinction to understand. 
+
+*Statements* are instructions that perform some action and do not return a value. *Expressions* evaluate to a resulting value. Take an example :
+
+```rust
+fn main() {
+    let y = 6;
+}
+
+```
+
+Function definitions are also statements; the entire preceding example is a statement in itself.
+
+Statements do not return values. Therefore, you can’t assign a `let` statement to another variable, as the following code tries to do; you’ll get an error:
+
+```rust
+fn main() {
+    let x = (let y = 6);
+}
+
+```
+
+It will receive an error :
+
+``` 
+$ cargo run
+   Compiling functions v0.1.0 (file:///projects/functions)
+error: expected expression, found statement (`let`)
+ --> src/main.rs:2:14
+  |
+2 |     let x = (let y = 6);
+  |              ^^^^^^^^^
+  |
+  = note: variable declaration using `let` is a statement
+
+error[E0658]: `let` expressions in this position are experimental
+ --> src/main.rs:2:14
+  |
+2 |     let x = (let y = 6);
+  |              ^^^^^^^^^
+  |
+  = note: see issue #53667 <https://github.com/rust-lang/rust/issues/53667> for more information
+  = help: you can write `matches!(<expr>, <pattern>)` instead of `let <pattern> = <expr>`
+
+warning: unnecessary parentheses around assigned value
+ --> src/main.rs:2:13
+  |
+2 |     let x = (let y = 6);
+  |             ^         ^
+  |
+  = note: `#[warn(unused_parens)]` on by default
+help: remove these parentheses
+  |
+2 -     let x = (let y = 6);
+2 +     let x = let y = 6;
+  | 
+
+For more information about this error, try `rustc --explain E0658`.
+warning: `functions` (bin "functions") generated 1 warning
+error: could not compile `functions` due to 2 previous errors; 1 warning emitted
+
+```
+
+***The `let y = 6` statement does not return a value, so there isn’t anything for `x` to bind to.***
+
+Expression will finally evaluate to a value.Taking`5+6`for instance , it is an expression that will be the value `11`
+
+Expressions can be part of statements,the `6` in statement `let y= 6`is an expression that evaluates to value `6`.
+
+Calling a function is an expression. Calling a macro is an expression. A new scope block created with curly brackets is an expression, for example:
+
+```rust
+fn main() {
+    let y = {
+        let x = 3;
+        x + 1
+    };
+
+    println!("The value of y is: {}", y);
+}
+
+```
+
+The expression
+
+```rust
+{
+    let x = 3;
+    x + 1
+}
+
+```
+
+
+
+should be noted that no semicolon at the end like what we did learn 
+
+Adding a semicolon to the end of the expression will turn to a statement
+
+# Function with Return Values
+
+Functions can return values to the code that calls them. We don’t name return values, but we must declare their type after an arrow (`->`).
+
+In Rust, the return value of the function is synonymous with the value of the final expression in the block of the body of a function,meanwhile ,you can return early from a functions using `return`keywordand specifying a value,but most functions return the last expression implicitly.
+
+For example:
+
+```rust
+fn main() {
+    let x = plus_one(5);
+
+    println!("The value of x is: {}", x);
+}
+
+fn plus_one(x: i32) -> i32 {
+    x + 1
+}
+
+```
+
+if we place a semicolon at the end of the line containing `x + 1`, changing it from an expression to a statement, we’ll get an error.
+
+as follow:
+
+```
+$ cargo run
+   Compiling functions v0.1.0 (file:///projects/functions)
+error[E0308]: mismatched types
+ --> src/main.rs:7:24
+  |
+7 | fn plus_one(x: i32) -> i32 {
+  |    --------            ^^^ expected `i32`, found `()`
+  |    |
+  |    implicitly returns `()` as its body has no tail or `return` expression
+8 |     x + 1;
+  |          - help: consider removing this semicolon
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `functions` due to previous error
+
+```
+
+The main error message, “mismatched types,” reveals the core issue with this code. The definition of the function `plus_one` says that it will return an `i32`, but statements don’t evaluate to a value, which is expressed by `()`, the unit type. Therefore, nothing is returned, which contradicts the function definition and results in an error. 
