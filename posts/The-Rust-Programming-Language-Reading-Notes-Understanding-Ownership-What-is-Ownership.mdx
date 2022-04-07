@@ -1,0 +1,99 @@
+---
+title: The Rust Programming Language Reading Notes-Understanding Ownership-What is Ownership
+description: "Ownership is Rust’s most unique feature and has deep implications for the rest of the language."
+date: April 7 2022
+---
+
+# What is Ownership
+
+*Ownership* is a set of rules that governs how a Rust program manages memory.
+
+Traditionally,there are two kinds of methods to managing the way of using the computer's memory :
+
+1. using garbage collection that looks for no-longer used memory as it runs
+2. the programmer must explicitly allocate and free the memory
+
+Though,Rust uses the third way--memory is managed through a system of ownership with a set of rules that the compiler checks.
+
+if the rules are violated ,the program won't compile.
+
+## The Stack and the Heap
+
+You are required to think about the stack and the heap more often when you are using Rust  than many other programming languages.
+
+Typically, whether a value is on the stack or the heap affects how the language behaves and why you have to make certain decisions. 
+
+Owing to the parts of the concepts of the `ownership` being related to the stack and the heap,it is necessary to have a brief comprehension of both concepts.
+
+Both the stack and the heap are parts of memory available to your code to use at runtime, but they are structured in different ways.
+
+The stack,for example, stores the value in the order it gets them and removes the value in the opposite order which is referred to as *last in,first out*
+
+All data stored on the stack must have a known, fixed size. Data with an unknown size at compile time or a size that might change must be stored on the heap instead.
+
+The heap is less organized: when you put data on the heap, you request a certain amount of space. The memory allocator finds an empty spot in the heap that is big enough, marks it as being in use, and returns a *pointer*, which is the address of that location. 
+
+Pushing values onto the stack is not considered allocating. Because the pointer to the heap is a known, fixed size, you can store the pointer on the stack, but when you want the actual data, you must follow the pointer.
+
+# Ownership Rules
+
+- Each value in Rust has a variable that’s called its *owner*.
+- There can only be one owner at a time.
+- When the owner goes out of scope, the value will be dropped.
+
+Work through the examples below and illustrate the rules
+
+## Variable Scope
+
+A scope is the range within a program for which an item is valid.
+
+Considering the variable:
+
+```rust
+let s = "hello";
+```
+
+The variable `s` refers to a string literal, where the value of the string is hardcoded into the text of our program. The variable is valid from the point at which it’s declared until the end of the current *scope*.
+
+```rust
+fn main() {
+    {                      // s is not valid here, it’s not yet declared
+        let s = "hello";   // s is valid from this point forward
+
+        // do stuff with s
+    }                      // this scope is now over, and s is no longer valid
+}
+```
+
+In a nut shell
+
+`s` is valid when comes into scope,but vice versa when goes out of the scope
+
+## The String Type
+
+We have been seen string literals,where a string value is hardcoded into the program.
+
+However it might not be so convenient and suitable for every situation when we are dealing with text.
+
+One reason is that they’re immutable. Another is that not every string value can be known when we write our code like trying to store what the user input.
+
+In this situations,Rust has a second string type, `String`. This type manages data allocated on the heap and as such is able to store an amount of text that is unknown to us at compile time. You can create a `String` from a string literal using the `from` function.
+
+```rust 
+let s = String::from("hello");
+```
+
+The double colon :: operator allows to use namespace this particular `from` function under the `String` type rather than using some sort of name like `string_from`.
+
+```rust
+	let mut s = String::from("hello");
+
+    s.push_str(", world!"); // push_str() appends a literal to a String
+
+    println!("{}", s); // This will print `hello, world!`
+```
+
+Why can `String` be mutated but literals cannot? The difference is how these two types deal with memory.
+
+## Memory and Allocation
+
